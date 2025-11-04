@@ -1,359 +1,163 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Temsa7 — 3D Customizer</title>
-<meta name="description" content="3D hoodie customizer — see your design live in 3D." />
-<!-- Three.js core + examples controls (same major as your project) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/examples/js/controls/OrbitControls.min.js"></script>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Hoodie Customizer</title>
 <style>
-:root{
-  --bg:#0f1721; --muted:#9aa6ad; --accent:#07c59c; --radius:12px; --shadow:0 12px 30px rgba(2,6,23,0.6);
-  color-scheme: dark; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; color:#e6f1f0;
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;padding:28px;background:linear-gradient(180deg,#061017,#07121b);
-  display:flex;flex-direction:column;gap:20px;
-}
-.header{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:18px}
-.brand{display:flex;gap:12px;align-items:center;color:inherit;text-decoration:none}
-.logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#06a87e);display:grid;place-items:center;font-weight:800;color:#041014}
-.container{max-width:1200px;margin:0 auto;width:100%}
-.custom-page{display:grid;grid-template-columns:420px 1fr;gap:18px;align-items:start}
-.panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:18px;border-radius:var(--radius);box-shadow:var(--shadow)}
-.label{font-size:13px;color:var(--muted);width:90px}
-.control{display:flex;align-items:center;gap:10px;margin:8px 0}
-.pills{display:flex;gap:8px;flex-wrap:wrap}
-.color-swatch{width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent}
-.color-swatch.active{outline:3px solid rgba(7,197,156,0.14);transform:translateY(-3px)}
-.select,input[type="file"],select,input[type="text"]{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:10px;border-radius:8px;color:inherit}
-.viewer{background:#05080a;border-radius:12px;min-height:560px;display:grid;place-items:center;overflow:hidden;position:relative}
-.hint{position:absolute;left:12px;bottom:12px;color:var(--muted);font-size:13px;background:rgba(0,0,0,0.25);padding:8px;border-radius:8px}
-.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
-.small{font-size:13px;color:var(--muted)}
-.controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.range{width:100%}
-.preview-actions{display:flex;gap:8px;margin-top:12px}
-.btn{padding:10px 12px;border-radius:10px;border:0;background:var(--accent);color:#041014;font-weight:700;cursor:pointer}
-.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:600}
-@media (max-width:980px){ .custom-page{grid-template-columns:1fr} .viewer{min-height:420px} }
+  body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
+  #viewer { width: 600px; height: 600px; background: #f0f0f0; margin-top: 20px; }
+  .controls { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .color-pill { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #ccc; }
+  input, select, button { padding: 5px; font-size: 16px; }
 </style>
 </head>
 <body>
-  <div class="header container">
-    <a class="brand" href="/"><div class="logo">T7</div><div><div style="font-weight:800">Temsa7</div><div style="font-size:12px;color:var(--muted)">Premium streetwear</div></div></a>
-    <div style="display:flex;gap:10px;align-items:center">
-      <button class="btn ghost" onclick="location.href='/shop'">Back to shop</button>
-    </div>
+
+<h1>3D Hoodie Customizer</h1>
+<div id="viewer"></div>
+
+<div class="controls">
+  <label>Choose Color:</label>
+  <div id="colorPills">
+    <div class="color-pill" style="background: #000000;" data-color="#000000"></div>
+    <div class="color-pill" style="background: #ffffff;" data-color="#ffffff"></div>
+    <div class="color-pill" style="background: #ff0000;" data-color="#ff0000"></div>
+    <div class="color-pill" style="background: #00ff00;" data-color="#00ff00"></div>
+    <div class="color-pill" style="background: #0000ff;" data-color="#0000ff"></div>
   </div>
 
-  <main class="container">
-    <div class="custom-page">
-      <!-- left controls -->
-      <div class="panel" aria-labelledby="customizerTitle">
-        <h3 id="customizerTitle" style="margin:0 0 10px">Customizer — 3D Hoodie Studio</h3>
-        <div class="small" style="margin-bottom:12px;color:var(--muted)">Choose base, color, upload art or add text. Use sliders to position and scale your chest decal.</div>
+  <label>Upload Design:</label>
+  <input type="file" id="designFile" accept="image/*">
 
-        <div class="control"><div class="label">Product</div>
-          <select id="productSelect" class="select"><option value="hoodie">Pullover Hoodie</option><option value="zip">Zip Hoodie</option><option value="tee">T-Shirt</option></select>
-        </div>
+  <label>Custom Text:</label>
+  <input type="text" id="customText" placeholder="Your text here">
 
-        <div class="control"><div class="label">Color</div><div class="pills" id="colorPills"></div></div>
+  <button id="addCustomToCart">Add to Cart</button>
+</div>
 
-        <div class="control"><div class="label">Size</div>
-          <select id="sizeSelect" class="select"><option>S</option><option>M</option><option>L</option><option>XL</option></select>
-        </div>
-
-        <div style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.02);padding-top:10px">
-          <div style="font-weight:700;margin-bottom:6px">Upload / Drop Art</div>
-          <input type="file" id="designFile" accept="image/*" />
-          <div id="dropHint" class="small" style="margin-top:6px;color:var(--muted)">Or drag & drop an image onto the viewer.</div>
-        </div>
-
-        <div style="margin-top:12px">
-          <div class="control"><div class="label">Text</div><input id="customText" placeholder="Short chest text (optional)" type="text" /></div>
-          <div class="control"><div class="label">Font</div>
-            <select id="fontSelect" class="select">
-              <option value="Inter">Inter (default)</option>
-              <option value="Arial">Arial</option>
-              <option value="Impact">Impact</option>
-              <option value="Verdana">Verdana</option>
-            </select>
-          </div>
-        </div>
-
-        <div style="margin-top:12px">
-          <div style="font-weight:700">Decal transform</div>
-          <div class="controls-grid" style="margin-top:8px">
-            <div>
-              <div class="small">X (%)</div>
-              <input id="tx" type="range" min="-40" max="40" value="0" class="range">
-            </div>
-            <div>
-              <div class="small">Y (%)</div>
-              <input id="ty" type="range" min="-30" max="30" value="0" class="range">
-            </div>
-
-            <div>
-              <div class="small">Scale</div>
-              <input id="ts" type="range" min="10" max="200" value="60" class="range">
-            </div>
-            <div>
-              <div class="small">Rotate (°)</div>
-              <input id="tr" type="range" min="-45" max="45" value="0" class="range">
-            </div>
-          </div>
-        </div>
-
-        <div class="preview-actions">
-          <button id="addCustomToCart" class="btn">Add Custom to Cart</button>
-          <button id="downloadPreview" class="btn ghost">Download Preview</button>
-          <button id="resetDecal" class="btn ghost">Reset</button>
-        </div>
-
-        <div style="margin-top:12px;color:var(--muted);font-size:13px">Tip: PNG with transparent background gives the cleanest result. Position using sliders or drag-and-drop in viewer.</div>
-      </div>
-
-      <!-- right viewer -->
-      <div class="panel">
-        <div class="viewer" id="viewer" tabindex="0" aria-label="3D viewer">
-          <div class="hint">Drag to rotate • Scroll to zoom • Use sliders to adjust decal</div>
-        </div>
-
-        <div class="toolbar">
-          <div class="small">Preview</div>
-          <div style="flex:1;height:1px;background:rgba(255,255,255,0.03)"></div>
-          <div class="small">Lighting & materials are simulated. Final print may vary.</div>
-        </div>
-      </div>
-    </div>
-  </main>
-
+<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
-/* ====== 3D Customizer (viewer-focused) ====== */
-const viewerEl = document.getElementById('viewer');
-let renderer, scene, camera, controls, hoodieMesh, hoodMesh, decalPlane;
-let currentColor = '#0b0b0b';
-let uploadedImage = null, customText = '', fontFamily='Inter';
+let scene, camera, renderer, controls;
+let hoodieMesh, designMesh;
 
-/* init renderer & scene */
-function init3D(){
-  renderer = new THREE.WebGLRenderer({antialias:true,alpha:true});
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(viewerEl.clientWidth, viewerEl.clientHeight);
-  renderer.domElement.style.width='100%';
-  renderer.domElement.style.height='100%';
-  viewerEl.appendChild(renderer.domElement);
+init();
+animate();
 
-  scene = new THREE.Scene(); scene.background = null;
+function init() {
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+  camera.position.set(0, 1.5, 3);
 
-  camera = new THREE.PerspectiveCamera(35, viewerEl.clientWidth/viewerEl.clientHeight, 0.1, 100);
-  camera.position.set(0, 1.6, 3.5);
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(600, 600);
+  document.getElementById('viewer').appendChild(renderer.domElement);
 
-  const hemi = new THREE.HemisphereLight(0xffffff, 0x080820, 0.9); scene.add(hemi);
-  const dir = new THREE.DirectionalLight(0xffffff, 0.8); dir.position.set(5,10,7); scene.add(dir);
-
-  // ground
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(20,20), new THREE.MeshStandardMaterial({color:0x030406,transparent:true,opacity:0.0}));
-  ground.rotation.x = -Math.PI/2; ground.position.y = -1.2; scene.add(ground);
-
-  // hoodie body (capsule-like)
-  const geo = new THREE.CapsuleGeometry(0.9, 1.1, 10, 24);
-  const mat = new THREE.MeshStandardMaterial({ color: currentColor, roughness:0.6, metalness:0.05, side:THREE.FrontSide });
-  hoodieMesh = new THREE.Mesh(geo, mat); hoodieMesh.position.y = 0.45; hoodieMesh.scale.set(1,1.05,1);
-  hoodieMesh.userData.isHoodie = true; scene.add(hoodieMesh);
-
-  // hood
-  const hoodGeo = new THREE.SphereGeometry(0.78, 24, 16, 0, Math.PI*2, 0, Math.PI/1.5);
-  const hoodMat = new THREE.MeshStandardMaterial({color:currentColor, roughness:0.65});
-  hoodMesh = new THREE.Mesh(hoodGeo, hoodMat); hoodMesh.position.set(0,1.05,0.03); hoodMesh.scale.set(1,0.7,1.02); scene.add(hoodMesh);
-
-  // decal plane - always sits slightly in front of the chest and receives the decal canvas texture
-  const planeGeo = new THREE.PlaneGeometry(0.8, 0.6);
-  const defaultCanvas = document.createElement('canvas'); defaultCanvas.width = 1024; defaultCanvas.height = 1024;
-  const dctx = defaultCanvas.getContext('2d'); dctx.fillStyle = currentColor; dctx.fillRect(0,0,1024,1024);
-  const defaultTex = new THREE.CanvasTexture(defaultCanvas);
-  defaultTex.encoding = THREE.sRGBEncoding; defaultTex.flipY = false;
-
-  const planeMat = new THREE.MeshStandardMaterial({ map: defaultTex, transparent:true, depthWrite:true });
-  decalPlane = new THREE.Mesh(planeGeo, planeMat);
-  // chest offset; tweak per product type later
-  decalPlane.position.set(0, 0.55, 0.85);
-  decalPlane.rotation.set(0, 0, 0);
-  scene.add(decalPlane);
-
-  // controls
   controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enablePan = false; controls.minDistance = 1.6; controls.maxDistance = 6; controls.target.set(0,0.6,0); controls.update();
+  controls.enableDamping = true;
 
-  // responsive
-  window.addEventListener('resize', onResize);
-  animate();
+  // Lights
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  scene.add(ambientLight);
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  directionalLight.position.set(5, 5, 5);
+  scene.add(directionalLight);
+
+  // Load GLB hoodie model (replace URL with your model)
+  const loader = new THREE.GLTFLoader();
+  loader.load('https://example.com/hoodie.glb', function(gltf) {
+    hoodieMesh = gltf.scene;
+    hoodieMesh.traverse((child) => {
+      if (child.isMesh) child.material = child.material.clone(); // Clone material for color changes
+    });
+    scene.add(hoodieMesh);
+  });
+
+  // Color change
+  document.querySelectorAll('.color-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      if (!hoodieMesh) return;
+      hoodieMesh.traverse((child) => {
+        if (child.isMesh) child.material.color.set(pill.dataset.color);
+      });
+    });
+  });
+
+  // Design upload
+  document.getElementById('designFile').addEventListener('change', handleDesignUpload);
+
+  // Text overlay
+  document.getElementById('customText').addEventListener('input', handleTextOverlay);
+
+  // Add to cart
+  document.getElementById('addCustomToCart').addEventListener('click', () => {
+    alert('Custom hoodie added to cart!');
+  });
 }
 
-/* render loop */
-function animate(){
-  requestAnimationFrame(animate);
-  // ensure textures update
-  if(decalPlane && decalPlane.material && decalPlane.material.map) decalPlane.material.map.needsUpdate = true;
-  renderer.render(scene, camera);
-}
+// Design mapping
+function handleDesignUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
 
-/* handle size */
-function onResize(){
-  if(!renderer) return;
-  const w = viewerEl.clientWidth, h = viewerEl.clientHeight;
-  renderer.setSize(w,h);
-  camera.aspect = w/h; camera.updateProjectionMatrix();
-}
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const texture = new THREE.TextureLoader().load(e.target.result);
 
-/* colors palette */
-const colors = ['#041014','#0b0b0b','#ffffff','#e6e6e6','#28302e','#2b3b57','#6b3a2b','#6c5d3b','#9ccaa7','#bdb6ff'];
-const colorPills = document.getElementById('colorPills');
-colors.forEach((c,i)=>{ const s = document.createElement('div'); s.className='color-swatch'; s.style.background=c; s.dataset.color=c; s.title=c;
-  s.addEventListener('click', ()=>{ setColor(c); document.querySelectorAll('.color-swatch').forEach(x=>x.classList.remove('active')); s.classList.add('active'); });
-  colorPills.appendChild(s); if(i===0) s.classList.add('active');
-});
-function setColor(hex){
-  currentColor = hex;
-  if(hoodieMesh) hoodieMesh.material.color.set(hex);
-  if(hoodMesh) hoodMesh.material.color.set(hex);
-  // update background of decal canvas so it matches garment (keeps appearance consistent)
-  updateTexture();
-}
+    if (designMesh) scene.remove(designMesh);
 
-/* image upload (file input) */
-document.getElementById('designFile').addEventListener('change', (e)=>{ const f = e.target.files && e.target.files[0]; if(!f) return readFile(f); });
-function readFile(file){
-  const r = new FileReader();
-  r.onload = (ev)=>{
-    const img = new Image(); img.onload = ()=>{ uploadedImage = img; updateTexture(); };
-    img.src = ev.target.result;
+    const planeGeom = new THREE.PlaneGeometry(0.6, 0.6);
+    const planeMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+    designMesh = new THREE.Mesh(planeGeom, planeMat);
+    designMesh.position.set(0, 0.8, 0.31); // adjust position on hoodie
+    scene.add(designMesh);
+
+    // Optional: make the design draggable (x/y axis)
+    window.addEventListener('mousemove', dragDesign);
   };
-  r.readAsDataURL(file);
+  reader.readAsDataURL(file);
 }
 
-/* drag & drop onto viewer */
-['dragenter','dragover'].forEach(ev=> viewerEl.addEventListener(ev, (e)=>{ e.preventDefault(); viewerEl.style.outline='2px dashed rgba(255,255,255,0.06)'; }));
-['dragleave','drop'].forEach(ev=> viewerEl.addEventListener(ev, (e)=>{ e.preventDefault(); viewerEl.style.outline=''; }));
-viewerEl.addEventListener('drop', (e)=>{ const f = e.dataTransfer.files && e.dataTransfer.files[0]; if(f) readFile(f); });
-
-/* text input */
-document.getElementById('customText').addEventListener('input', (e)=>{ customText = e.target.value; updateTexture(); });
-document.getElementById('fontSelect').addEventListener('change', (e)=>{ fontFamily = e.target.value; updateTexture(); });
-
-/* transform sliders */
-const sliderX = document.getElementById('tx'), sliderY = document.getElementById('ty'), sliderS = document.getElementById('ts'), sliderR = document.getElementById('tr');
-[sliderX,sliderY,sliderS,sliderR].forEach(s=>s.addEventListener('input', applyDecalTransform));
-function applyDecalTransform(){
-  const xPerc = Number(sliderX.value)/100; const yPerc = Number(sliderY.value)/100; const scalePerc = Number(sliderS.value)/100; const rot = Number(sliderR.value)*Math.PI/180;
-  // position relative to hoodie chest; values tuned for our model
-  decalPlane.position.x = xPerc * 0.8;
-  decalPlane.position.y = 0.55 + yPerc * 0.5;
-  decalPlane.scale.set(scalePerc, scalePerc, 1);
-  decalPlane.rotation.z = rot;
-}
-
-/* build the decal texture by composing base color + uploaded image + text */
-function updateTexture(){
-  const W = 1024, H = 1024;
-  const canvas = document.createElement('canvas'); canvas.width=W; canvas.height=H;
+function handleTextOverlay(event) {
+  if (!designMesh) return;
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 512;
   const ctx = canvas.getContext('2d');
-  // base fill matches garment color to preview true look
-  ctx.fillStyle = currentColor; ctx.fillRect(0,0,W,H);
 
-  // draw uploaded image centered (respect aspect, max width)
-  if(uploadedImage){
-    const maxW = W * 0.65; const maxH = W * 0.45;
-    const scale = Math.min(maxW / uploadedImage.width, maxH / uploadedImage.height, 1);
-    const w = uploadedImage.width * scale; const h = uploadedImage.height * scale;
-    const x = (W - w)/2; const y = H*0.32 - h/2;
-    ctx.drawImage(uploadedImage, x, y, w, h);
-  }
+  // Draw original image if exists
+  if (designMesh.material.map.image) ctx.drawImage(designMesh.material.map.image, 0, 0, 512, 512);
 
-  // text rendering
-  if(customText && customText.trim()){
-    const size = Math.max(36, Math.floor(W * 0.06));
-    ctx.font = `${size}px ${fontFamily}, sans-serif`;
-    ctx.textAlign = 'center';
-    // choose contrasting color (light text on dark garment, dark text on light garment)
-    const lum = perceivedLuminance(currentColor);
-    ctx.fillStyle = lum > 0.6 ? 'rgba(10,10,10,0.9)' : 'rgba(255,255,255,0.95)';
-    ctx.fillText(customText, W/2, H*0.75);
-  }
+  // Draw text
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 50px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText(event.target.value, 256, 256);
 
-  // create/update texture
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.flipY = false; tex.encoding = THREE.sRGBEncoding;
-  decalPlane.material.map = tex; decalPlane.material.needsUpdate = true;
+  designMesh.material.map = new THREE.CanvasTexture(canvas);
+  designMesh.material.needsUpdate = true;
 }
 
-/* simple luminance helper to choose text color */
-function perceivedLuminance(hex){
-  hex = hex.replace('#',''); if(hex.length===3) hex = hex.split('').map(x=>x+x).join('');
-  const r = parseInt(hex.substring(0,2),16)/255; const g = parseInt(hex.substring(2,4),16)/255; const b = parseInt(hex.substring(4,6),16)/255;
-  return 0.2126*r + 0.7152*g + 0.0722*b;
+// Dragging the design
+let dragging = false;
+function dragDesign(e) {
+  if (!dragging || !designMesh) return;
+  const rect = renderer.domElement.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  designMesh.position.x = x * 0.6;
+  designMesh.position.y = y * 0.8;
 }
 
-/* capture high-res thumbnail */
-function captureThumbnail(){
-  if(!renderer) return null;
-  const prevSize = renderer.getSize(new THREE.Vector2()); const prevPR = renderer.getPixelRatio();
-  const w = 1200, h = 1200;
-  renderer.setPixelRatio(1); renderer.setSize(w,h);
+window.addEventListener('mousedown', () => dragging = true);
+window.addEventListener('mouseup', () => dragging = false);
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
   renderer.render(scene, camera);
-  const data = renderer.domElement.toDataURL('image/png');
-  // restore
-  renderer.setSize(prevSize.x, prevSize.y); renderer.setPixelRatio(prevPR);
-  return data;
 }
-
-/* cart + local storage helpers (lightweight, same behavior as your main site) */
-function getCart(){ return JSON.parse(localStorage.getItem('temsa7_cart')||'[]'); }
-function saveCart(c){ localStorage.setItem('temsa7_cart', JSON.stringify(c)); }
-
-/* add custom to cart */
-document.getElementById('addCustomToCart').addEventListener('click', ()=>{
-  const product = document.getElementById('productSelect').value;
-  const size = document.getElementById('sizeSelect').value;
-  const price = product === 'tee' ? 29 : (product === 'zip' ? 89 : 79);
-  const name = 'Custom ' + (product === 'tee' ? 'T-Shirt' : product === 'zip' ? 'Zip Hoodie' : 'Pullover Hoodie');
-  const thumb = captureThumbnail();
-  const item = { id: 'custom_' + Date.now(), name, price, qty:1, thumb, variant:'Custom', color: currentColor, size, meta:{ text: customText, transform:{x:sliderX.value,y:sliderY.value,s:sliderS.value,r:sliderR.value} } };
-  const c = getCart(); c.push(item); saveCart(c);
-  alert('Custom item added to cart (saved locally).');
-});
-
-/* download preview */
-document.getElementById('downloadPreview').addEventListener('click', ()=>{
-  const data = captureThumbnail(); if(!data) return alert('Preview not ready yet.');
-  const a = document.createElement('a'); a.href = data; a.download = 'temsa7-preview.png'; a.click();
-});
-
-/* reset decal */
-document.getElementById('resetDecal').addEventListener('click', ()=>{
-  uploadedImage = null; customText = ''; document.getElementById('designFile').value=''; document.getElementById('customText').value=''; sliderX.value=0; sliderY.value=0; sliderS.value=60; sliderR.value=0; applyDecalTransform(); updateTexture();
-});
-
-/* keyboard: press 'S' to screenshot, 'R' to reset */
-window.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase()==='s') { document.getElementById('downloadPreview').click(); } if(e.key.toLowerCase()==='r'){ document.getElementById('resetDecal').click(); } });
-
-/* helper: convert hex -> rgba string (for legacy canvas usage if needed) */
-function hexToRGBA(hex){ hex = hex.replace('#',''); if(hex.length===3) hex = hex.split('').map(x=>x+x).join(''); const r = parseInt(hex.substring(0,2),16), g = parseInt(hex.substring(2,4),16), b = parseInt(hex.substring(4,6),16); return `rgb(${r},${g},${b})`; }
-
-/* init */
-init3D();
-updateTexture();
-applyDecalTransform();
-new ResizeObserver(onResize).observe(viewerEl);
-
-/* expose for console tinkering */
-window.temsa7Customizer = { setColor, updateTexture, captureThumbnail, getCart };
 </script>
 </body>
 </html>
