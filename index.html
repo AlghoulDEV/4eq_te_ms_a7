@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Acme Shop — Home</title>
+    <meta name="description" content="Acme Shop — quality goods at fair prices. Browse featured products, categories, and special offers." />
+    <style>
+        :root{
+            --bg:#fbfbfd;
+            --card:#ffffff;
+            --muted:#6b7280;
+            --accent:#0ea5a4;
+            --accent-600:#059e9d;
+            --shadow: 0 6px 18px rgba(14,165,164,0.08);
+            --radius:12px;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            color-scheme: light;
+        }
+        *{box-sizing:border-box}
+        html,body{height:100%}
+        body{
+            margin:0;
+            background:linear-gradient(180deg, #f7f9fb 0%, var(--bg) 100%);
+            color:#0f172a;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            line-height:1.35;
+            padding:24px;
+        }
+
+        header{
+            display:flex;
+            gap:20px;
+            align-items:center;
+            justify-content:space-between;
+            max-width:1200px;
+            margin:0 auto 28px;
+        }
+        .brand{
+            display:flex;
+            gap:12px;
+            align-items:center;
+            text-decoration:none;
+            color:inherit;
+        }
+        .logo{
+            width:48px;
+            height:48px;
+            display:inline-grid;
+            place-items:center;
+            background:linear-gradient(135deg,var(--accent),var(--accent-600));
+            border-radius:10px;
+            color:white;
+            font-weight:700;
+            box-shadow:var(--shadow);
+        }
+        nav{display:flex;gap:14px;align-items:center}
+        nav a{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:8px}
+        nav a:hover{background:#eef7f7;color:var(--accent-600)}
+        .actions{display:flex;gap:12px;align-items:center}
+        .search{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            background:var(--card);
+            padding:8px 10px;
+            border-radius:12px;
+            box-shadow:var(--shadow);
+        }
+        .search input{
+            border:0;outline:0;background:transparent;width:220px;font-size:14px;color:inherit;
+        }
+        .cart{
+            position:relative;
+            background:var(--card);
+            padding:10px;
+            border-radius:10px;
+            box-shadow:var(--shadow);
+            display:inline-grid;
+            place-items:center;
+            min-width:44px;
+            min-height:44px;
+        }
+        .cart .count{
+            position:absolute;
+            top:6px;
+            right:6px;
+            background:#ef4444;
+            color:#fff;
+            font-weight:600;
+            font-size:12px;
+            padding:3px 6px;
+            border-radius:999px;
+            box-shadow:0 2px 6px rgba(0,0,0,0.12);
+        }
+
+        main{max-width:1200px;margin:0 auto}
+        .hero{
+            display:grid;
+            grid-template-columns:1fr 420px;
+            gap:24px;
+            align-items:center;
+            margin-bottom:28px;
+        }
+        .hero .panel{
+            background:linear-gradient(180deg,#ffffff 0%, #f8ffff 100%);
+            padding:28px;
+            border-radius:var(--radius);
+            box-shadow:var(--shadow);
+        }
+        .hero h1{margin:0 0 8px;font-size:28px}
+        .hero p{margin:0 0 16px;color:var(--muted)}
+        .cta{
+            display:inline-block;
+            background:linear-gradient(90deg,var(--accent),var(--accent-600));
+            color:white;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:600;
+            box-shadow:0 8px 20px rgba(5,158,157,0.12)
+        }
+        .promo{
+            display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff #f3fbfb);
+        }
+        .promo .tile{
+            display:flex;gap:12px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(90deg,#ffffff,#f8ffff);
+            border:1px solid rgba(14,165,164,0.06);
+        }
+        .promo .tile svg{width:36px;height:36px;flex:0 0 36px}
+
+        .section-head{display:flex;align-items:end;justify-content:space-between;margin:22px 0}
+        .products{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:16px;
+            margin-bottom:40px;
+        }
+        .card{
+            background:var(--card);
+            padding:14px;
+            border-radius:14px;
+            box-shadow:var(--shadow);
+            display:flex;flex-direction:column;gap:12px;
+        }
+        .img{
+            width:100%;
+            aspect-ratio:4/3;
+            border-radius:10px;
+            background:linear-gradient(135deg,#f0f4f4,#eef7f7);
+            display:grid;
+            place-items:center;
+            color:var(--muted);
+            font-weight:600;
+            font-size:14px;
+        }
+        .meta{display:flex;justify-content:space-between;align-items:center}
+        .price{font-weight:700}
+        .tags{color:var(--muted);font-size:13px}
+        .card button{
+            border:0;
+            background:var(--accent);
+            color:white;
+            padding:10px 12px;
+            border-radius:10px;
+            cursor:pointer;font-weight:600;
+        }
+        .card .secondary{
+            background:#f3f4f6;color:var(--muted);
+            font-weight:600;
+        }
+        footer{
+            max-width:1200px;margin:40px auto 0;padding-top:20px;border-top:1px solid #eef2f7;color:var(--muted)
+        }
+
+        /* responsive */
+        @media (max-width:960px){
+            .hero{grid-template-columns:1fr;grid-auto-rows:auto}
+            .products{grid-template-columns:repeat(2,1fr)}
+            .search input{width:120px}
+        }
+        @media (max-width:560px){
+            body{padding:14px}
+            .products{grid-template-columns:1fr}
+            header{flex-direction:column;align-items:stretch;gap:12px}
+            nav{order:3;justify-content:space-between}
+            .search input{width:80px}
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a class="brand" href="#" aria-label="Acme Shop Home">
+            <div class="logo" aria-hidden="true">AS</div>
+            <div>
+                <div style="font-weight:700">Acme Shop</div>
+                <div style="font-size:12px;color:var(--muted)">Quality goods · Fast delivery</div>
+            </div>
+        </a>
+
+        <nav role="navigation" aria-label="Primary">
+            <a href="#">Home</a>
+            <a href="#">Shop</a>
+            <a href="#">Categories</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </nav>
+
+        <div class="actions" aria-hidden="false">
+            <div class="search" role="search">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M21 21l-4.35-4.35" stroke="#6B7280" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="11" cy="11" r="6" stroke="#6B7280" stroke-width="2" fill="none"/>
+                </svg>
+                <input id="search" type="search" placeholder="Search products..." aria-label="Search products" />
+            </div>
+
+            <button class="cart" id="cartButton" aria-label="Open cart">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M3 3h2l.4 2M7 13h10l3-8H6.4" stroke="#0f172a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="10" cy="19" r="1" fill="#0f172a"></circle>
+                    <circle cx="18" cy="19" r="1" fill="#0f172a"></circle>
+                </svg>
+                <span class="count" id="cartCount" aria-hidden="true">0</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="panel" aria-labelledby="hero-title">
+                <h1 id="hero-title">Discover what's new — seasonal picks for you</h1>
+                <p>Curated selection of trending items. Fast shipping, easy returns, and friendly support.</p>
+                <div style="display:flex;gap:12px;align-items:center">
+                    <a href="#" class="cta">Shop Featured</a>
+                    <a href="#" style="color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:10px">See all</a>
+                </div>
+                <div style="margin-top:16px;color:var(--muted);font-size:13px">
+                    Free shipping over $75 · 30-day returns
+                </div>
+            </div>
+
+            <aside class="promo" aria-label="Promotions">
+                <div class="tile">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 12h18" stroke="#059e9d" stroke-width="2" stroke-linecap="round"/></svg>
+                    <div>
+                        <div style="font-weight:700">Limited Offer</div>
+                        <div style="font-size:13px;color:var(--muted)">10% off first order — use WELCOME</div>
+                    </div>
+                </div>
+
+                <div class="tile">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18" stroke="#059e9d" stroke-width="2" stroke-linecap="round"/></svg>
+                    <div>
+                        <div style="font-weight:700">Sustainable Brands</div>
+                        <div style="font-size:13px;color:var(--muted)">Carefully selected eco-friendly items</div>
+                    </div>
+                </div>
+
+                <div class="tile">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 8h18M8 21V8" stroke="#059e9d" stroke-width="2" stroke-linecap="round"/></svg>
+                    <div>
+                        <div style="font-weight:700">Fast Delivery</div>
+                        <div style="font-size:13px;color:var(--muted)">Same-day dispatch on many items</div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <div>
+                    <h2 style="margin:0">Featured Products</h2>
+                    <div style="color:var(--muted);font-size:13px">Handpicked items you'll love</div>
+                </div>
+                <div style="color:var(--muted);font-size:13px">Sort: <select id="sort" style="margin-left:8px"><option>Popular</option><option>Newest</option><option>Price: Low to High</option></select></div>
+            </div>
+
+            <div class="products" id="productGrid" aria-live="polite">
+                <article class="card" data-id="1" data-name="Everyday Backpack" data-price="79">
+                    <div class="img" aria-hidden="true">Backpack</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div>
+                            <div style="font-weight:700">Everyday Backpack</div>
+                            <div class="tags">Waterproof · Unisex</div>
+                        </div>
+                        <div class="price">$79</div>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button class="add">Add to cart</button>
+                        <button class="secondary" type="button">View</button>
+                    </div>
+                </article>
+
+                <article class="card" data-id="2" data-name="Comfy Sneakers" data-price="99">
+                    <div class="img">Sneakers</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div>
+                            <div style="font-weight:700">Comfy Sneakers</div>
+                            <div class="tags">Breathable · Lightweight</div>
+                        </div>
+                        <div class="price">$99</div>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button class="add">Add to cart</button>
+                        <button class="secondary" type="button">View</button>
+                    </div>
+                </article>
+
+                <article class="card" data-id="3" data-name="Classic Watch" data-price="149">
+                    <div class="img">Watch</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div>
+                            <div style="font-weight:700">Classic Watch</div>
+                            <div class="tags">Stainless steel</div>
+                        </div>
+                        <div class="price">$149</div>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button class="add">Add to cart</button>
+                        <button class="secondary" type="button">View</button>
+                    </div>
+                </article>
+
+                <article class="card" data-id="4" data-name="Wireless Earbuds" data-price="59">
+                    <div class="img">Earbuds</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div>
+                            <div style="font-weight:700">Wireless Earbuds</div>
+                            <div class="tags">Noise-cancelling</div>
+                        </div>
+                        <div class="price">$59</div>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button class="add">Add to cart</button>
+                        <button class="secondary" type="button">View</button>
+                    </div>
+                </article>
+
+                <article class="card" data-id="5" data-name="Cozy Hoodie" data-price="49">
+                    <div class="img">Hoodie</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div>
+                            <div style="font-weight:700">Cozy Hoodie</div>
+                            <div class="tags">Organic cotton</div>
+                        </div>
+                        <div class="price">$49</div>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button class="add">Add to cart</button>
+                        <button class="secondary" type="button">View</button>
+                    </div>
+                </article>
+
+                <article class="card" data-id="6" data-name="Insulated Bottle" data-price="25">
+                    <div class="img">Bottle</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div>
+                            <div style="font-weight:700">Insulated Bottle</div>
+                            <div class="tags">Keeps drinks cold/hot</div>
+                        </div>
+                        <div class="price">$25</div>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button class="add">Add to cart</button>
+                        <button class="secondary" type="button">View</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <footer>
+            <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap">
+                <div>
+                    <div style="font-weight:700">Acme Shop</div>
+                    <div style="color:var(--muted);margin-top:6px">123 Market Street · Anytown · USA</div>
+                    <div style="color:var(--muted);margin-top:6px">support@acmeshop.example</div>
+                </div>
+
+                <div>
+                    <div style="font-weight:700">Newsletter</div>
+                    <div style="margin-top:6px;color:var(--muted);font-size:13px">Get updates about new products and offers.</div>
+                    <div style="display:flex;gap:8px;margin-top:8px">
+                        <input id="email" placeholder="Email address" style="padding:8px 10px;border-radius:8px;border:1px solid #e6eef0" />
+                        <button id="subscribe" style="padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:600">Subscribe</button>
+                    </div>
+                </div>
+
+                <div style="min-width:160px">
+                    <div style="font-weight:700">Help</div>
+                    <div style="margin-top:6px;color:var(--muted)"><a href="#" style="text-decoration:none;color:inherit">Shipping</a></div>
+                    <div style="margin-top:6px;color:var(--muted)"><a href="#" style="text-decoration:none;color:inherit">Returns</a></div>
+                    <div style="margin-top:6px;color:var(--muted)"><a href="#" style="text-decoration:none;color:inherit">FAQ</a></div>
+                </div>
+            </div>
+
+            <div style="margin-top:18px;color:var(--muted);font-size:13px">© <span id="year"></span> Acme Shop. All rights reserved.</div>
+        </footer>
+    </main>
+
+    <script>
+        // Simple cart behavior: increment count, store in localStorage
+        (function(){
+            const cartCountEl = document.getElementById('cartCount');
+            const addButtons = document.querySelectorAll('.add');
+            const yearEl = document.getElementById('year');
+            yearEl.textContent = new Date().getFullYear();
+
+            function getCount(){ return Number(localStorage.getItem('acme_cart_count') || 0); }
+            function setCount(n){ localStorage.setItem('acme_cart_count', String(n)); cartCountEl.textContent = n; }
+
+            setCount(getCount());
+
+            addButtons.forEach(btn=>{
+                btn.addEventListener('click', (e)=>{
+                    const card = e.currentTarget.closest('.card');
+                    const name = card.dataset.name;
+                    const price = card.dataset.price;
+                    const id = card.dataset.id;
+                    // increment
+                    const newCount = getCount() + 1;
+                    setCount(newCount);
+                    // brief visual feedback
+                    btn.textContent = 'Added';
+                    btn.disabled = true;
+                    setTimeout(()=>{ btn.textContent = 'Add to cart'; btn.disabled = false; }, 900);
+                    // Log to console (placeholder for analytics / cart storage)
+                    console.info('Added to cart:', { id, name, price });
+                });
+            });
+
+            // basic search filter
+            const search = document.getElementById('search');
+            search.addEventListener('input', ()=>{
+                const q = search.value.trim().toLowerCase();
+                document.querySelectorAll('.card').forEach(card=>{
+                    const name = card.dataset.name.toLowerCase();
+                    const tags = (card.querySelector('.tags')?.textContent || '').toLowerCase();
+                    if (!q || name.includes(q) || tags.includes(q)) card.style.display = '';
+                    else card.style.display = 'none';
+                });
+            });
+
+            // subscribe button (UI only)
+            document.getElementById('subscribe').addEventListener('click', ()=>{
+                const email = document.getElementById('email').value.trim();
+                if (!email) { alert('Please type your email'); return; }
+                alert('Thanks — you are subscribed: ' + email);
+                document.getElementById('email').value = '';
+            });
+        })();
+    </script>
+</body>
+</html></div></article></div></svg></button></svg></div>
