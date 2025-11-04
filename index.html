@@ -1,451 +1,757 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Acme Shop — Home</title>
-    <meta name="description" content="Acme Shop — quality goods at fair prices. Browse featured products, categories, and special offers." />
-    <style>
-        :root{
-            --bg:#fbfbfd;
-            --card:#ffffff;
-            --muted:#6b7280;
-            --accent:#0ea5a4;
-            --accent-600:#059e9d;
-            --shadow: 0 6px 18px rgba(14,165,164,0.08);
-            --radius:12px;
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-            color-scheme: light;
-        }
-        *{box-sizing:border-box}
-        html,body{height:100%}
-        body{
-            margin:0;
-            background:linear-gradient(180deg, #f7f9fb 0%, var(--bg) 100%);
-            color:#0f172a;
-            -webkit-font-smoothing:antialiased;
-            -moz-osx-font-smoothing:grayscale;
-            line-height:1.35;
-            padding:24px;
-        }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Temsa7 — Premium Streetwear</title>
+<meta name="description" content="Temsa7 — premium hoodies & tees. Customize your own 3D hoodie or shop ready-made designs." />
+<!-- Three.js from CDN (no build tools) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/examples/js/controls/OrbitControls.min.js"></script>
 
-        header{
-            display:flex;
-            gap:20px;
-            align-items:center;
-            justify-content:space-between;
-            max-width:1200px;
-            margin:0 auto 28px;
-        }
-        .brand{
-            display:flex;
-            gap:12px;
-            align-items:center;
-            text-decoration:none;
-            color:inherit;
-        }
-        .logo{
-            width:48px;
-            height:48px;
-            display:inline-grid;
-            place-items:center;
-            background:linear-gradient(135deg,var(--accent),var(--accent-600));
-            border-radius:10px;
-            color:white;
-            font-weight:700;
-            box-shadow:var(--shadow);
-        }
-        nav{display:flex;gap:14px;align-items:center}
-        nav a{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:8px}
-        nav a:hover{background:#eef7f7;color:var(--accent-600)}
-        .actions{display:flex;gap:12px;align-items:center}
-        .search{
-            display:flex;
-            align-items:center;
-            gap:8px;
-            background:var(--card);
-            padding:8px 10px;
-            border-radius:12px;
-            box-shadow:var(--shadow);
-        }
-        .search input{
-            border:0;outline:0;background:transparent;width:220px;font-size:14px;color:inherit;
-        }
-        .cart{
-            position:relative;
-            background:var(--card);
-            padding:10px;
-            border-radius:10px;
-            box-shadow:var(--shadow);
-            display:inline-grid;
-            place-items:center;
-            min-width:44px;
-            min-height:44px;
-        }
-        .cart .count{
-            position:absolute;
-            top:6px;
-            right:6px;
-            background:#ef4444;
-            color:#fff;
-            font-weight:600;
-            font-size:12px;
-            padding:3px 6px;
-            border-radius:999px;
-            box-shadow:0 2px 6px rgba(0,0,0,0.12);
-        }
+<style>
+:root{
+  --bg:#0f1721;
+  --panel:#0b1114;
+  --muted:#9aa6ad;
+  --accent:#07c59c;
+  --accent-600:#06a87e;
+  --card:#0b1114;
+  --glass: rgba(255,255,255,0.03);
+  --radius:14px;
+  --shadow: 0 12px 30px rgba(2,6,23,0.6);
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background: linear-gradient(180deg,#061017 0%, #07121b 100%);
+  color:#e6f1f0;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.4;
+  padding:28px;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+  gap:24px;
+}
 
-        main{max-width:1200px;margin:0 auto}
-        .hero{
-            display:grid;
-            grid-template-columns:1fr 420px;
-            gap:24px;
-            align-items:center;
-            margin-bottom:28px;
-        }
-        .hero .panel{
-            background:linear-gradient(180deg,#ffffff 0%, #f8ffff 100%);
-            padding:28px;
-            border-radius:var(--radius);
-            box-shadow:var(--shadow);
-        }
-        .hero h1{margin:0 0 8px;font-size:28px}
-        .hero p{margin:0 0 16px;color:var(--muted)}
-        .cta{
-            display:inline-block;
-            background:linear-gradient(90deg,var(--accent),var(--accent-600));
-            color:white;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:600;
-            box-shadow:0 8px 20px rgba(5,158,157,0.12)
-        }
-        .promo{
-            display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff #f3fbfb);
-        }
-        .promo .tile{
-            display:flex;gap:12px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(90deg,#ffffff,#f8ffff);
-            border:1px solid rgba(14,165,164,0.06);
-        }
-        .promo .tile svg{width:36px;height:36px;flex:0 0 36px}
+/* header */
+.header{
+  max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:18px;
+}
+.brand{display:flex;gap:14px;align-items:center;text-decoration:none;color:inherit}
+.logo{
+  width:60px;height:60px;border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-600));
+  display:grid;place-items:center;font-weight:800;font-size:20px;color:#041014;box-shadow:var(--shadow);
+}
+.nav{display:flex;gap:14px;align-items:center;flex:1;justify-content:center}
+.nav a{color:var(--muted);text-decoration:none;padding:10px 12px;border-radius:10px;transition:all .18s}
+.nav a.active, .nav a:hover{background:var(--glass);color:var(--accent);transform:translateY(-2px)}
+.actions{display:flex;gap:10px;align-items:center}
+.icon-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:10px;border-radius:10px;color:var(--muted);cursor:pointer}
+.hero{
+  max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;
+}
+.hero-card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  padding:32px;border-radius:var(--radius);box-shadow:var(--shadow);
+}
+.hero h1{margin:0;font-size:40px;letter-spacing:-0.02em}
+.hero p{margin:12px 0;color:var(--muted);font-size:16px}
+.cta{display:inline-block;background:linear-gradient(90deg,var(--accent),var(--accent-600));color:#041014;padding:12px 18px;border-radius:12px;font-weight:700;text-decoration:none;box-shadow:0 14px 40px rgba(6,197,156,0.12)}
+.promo{display:flex;flex-direction:column;gap:12px;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border:1px solid rgba(255,255,255,0.03)}
 
-        .section-head{display:flex;align-items:end;justify-content:space-between;margin:22px 0}
-        .products{
-            display:grid;
-            grid-template-columns:repeat(3,1fr);
-            gap:16px;
-            margin-bottom:40px;
-        }
-        .card{
-            background:var(--card);
-            padding:14px;
-            border-radius:14px;
-            box-shadow:var(--shadow);
-            display:flex;flex-direction:column;gap:12px;
-        }
-        .img{
-            width:100%;
-            aspect-ratio:4/3;
-            border-radius:10px;
-            background:linear-gradient(135deg,#f0f4f4,#eef7f7);
-            display:grid;
-            place-items:center;
-            color:var(--muted);
-            font-weight:600;
-            font-size:14px;
-        }
-        .meta{display:flex;justify-content:space-between;align-items:center}
-        .price{font-weight:700}
-        .tags{color:var(--muted);font-size:13px}
-        .card button{
-            border:0;
-            background:var(--accent);
-            color:white;
-            padding:10px 12px;
-            border-radius:10px;
-            cursor:pointer;font-weight:600;
-        }
-        .card .secondary{
-            background:#f3f4f6;color:var(--muted);
-            font-weight:600;
-        }
-        footer{
-            max-width:1200px;margin:40px auto 0;padding-top:20px;border-top:1px solid #eef2f7;color:var(--muted)
-        }
+/* products */
+.section{max-width:1200px;margin:0 auto}
+.section-head{display:flex;align-items:end;justify-content:space-between;margin:20px 0}
+.products{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  padding:16px;border-radius:12px;box-shadow:0 8px 24px rgba(2,6,23,0.6);display:flex;flex-direction:column;gap:12px;
+}
+.product-media{
+  width:100%;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:#07121b;display:grid;place-items:center;
+}
+.product-media img{width:100%;height:100%;object-fit:cover}
+.meta{display:flex;justify-content:space-between;align-items:center}
+.price{font-weight:800;color:var(--accent)}
+.tags{color:var(--muted);font-size:13px}
+.card .controls{display:flex;gap:10px}
+.btn{padding:10px 12px;border-radius:10px;border:0;background:var(--accent);color:#041014;font-weight:700;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:600}
 
-        /* responsive */
-        @media (max-width:960px){
-            .hero{grid-template-columns:1fr;grid-auto-rows:auto}
-            .products{grid-template-columns:repeat(2,1fr)}
-            .search input{width:120px}
-        }
-        @media (max-width:560px){
-            body{padding:14px}
-            .products{grid-template-columns:1fr}
-            header{flex-direction:column;align-items:stretch;gap:12px}
-            nav{order:3;justify-content:space-between}
-            .search input{width:80px}
-        }
-    </style>
+/* cart drawer */
+.cart-drawer{position:fixed;right:20px;top:90px;width:360px;background:linear-gradient(180deg, #07121b, #041014);border-radius:12px;padding:16px;box-shadow:var(--shadow);z-index:80;display:none;flex-direction:column;gap:12px}
+.cart-drawer.show{display:flex}
+.cart-item{display:flex;gap:12px;align-items:center}
+.cart-thumb{width:64px;height:64px;border-radius:8px;background:#08121a;display:grid;place-items:center;overflow:hidden}
+.small{font-size:13px;color:var(--muted)}
+
+/* customizer */
+.custom-page{display:grid;grid-template-columns:460px 1fr;gap:18px}
+.panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:18px;border-radius:12px;box-shadow:var(--shadow)}
+.control{display:flex;gap:8px;align-items:center;margin:8px 0}
+.label{width:92px;color:var(--muted);font-size:13px}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.color-swatch{width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent}
+.color-swatch.active{outline:3px solid rgba(7,197,156,0.14);transform:translateY(-3px)}
+.select, input[type="file"], select{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:10px;border-radius:8px;color:inherit;min-width:140px}
+
+/* canvas holder */
+.viewer{background:#05080a;border-radius:12px;min-height:420px;display:grid;place-items:center;overflow:hidden;position:relative}
+.viewer .hint{position:absolute;left:10px;bottom:10px;color:var(--muted);font-size:13px;background:rgba(0,0,0,0.25);padding:8px;border-radius:8px}
+
+/* footer */
+footer{max-width:1200px;margin:0 auto;color:var(--muted);padding-top:18px;border-top:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;gap:12px;align-items:center}
+
+/* responsive */
+@media (max-width:980px){
+  .hero{grid-template-columns:1fr}
+  .products{grid-template-columns:repeat(2,1fr)}
+  .custom-page{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  body{padding:14px}
+  .products{grid-template-columns:1fr}
+  .nav{display:none}
+  .header{align-items:flex-start;flex-direction:column;gap:10px}
+  .cart-drawer{right:10px;left:10px;width:auto}
+}
+</style>
 </head>
 <body>
-    <header>
-        <a class="brand" href="#" aria-label="Acme Shop Home">
-            <div class="logo" aria-hidden="true">AS</div>
-            <div>
-                <div style="font-weight:700">Acme Shop</div>
-                <div style="font-size:12px;color:var(--muted)">Quality goods · Fast delivery</div>
-            </div>
-        </a>
+  <!-- header -->
+  <div class="header" role="banner">
+    <a class="brand" href="#home">
+      <div class="logo" aria-hidden="true">T7</div>
+      <div>
+        <div style="font-weight:800;font-size:18px">Temsa7</div>
+        <div style="font-size:12px;color:var(--muted)">Premium streetwear</div>
+      </div>
+    </a>
 
-        <nav role="navigation" aria-label="Primary">
-            <a href="#">Home</a>
-            <a href="#">Shop</a>
-            <a href="#">Categories</a>
-            <a href="#">About</a>
-            <a href="#">Contact</a>
-        </nav>
+    <nav class="nav" role="navigation" aria-label="Primary">
+      <a href="#home" class="nav-link" data-route="home">Home</a>
+      <a href="#shop" class="nav-link" data-route="shop">Shop</a>
+      <a href="#custom" class="nav-link" data-route="custom">Customizer</a>
+      <a href="#about" class="nav-link" data-route="about">About</a>
+      <a href="#contact" class="nav-link" data-route="contact">Contact</a>
+    </nav>
 
-        <div class="actions" aria-hidden="false">
-            <div class="search" role="search">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M21 21l-4.35-4.35" stroke="#6B7280" stroke-width="2" stroke-linecap="round"/>
-                    <circle cx="11" cy="11" r="6" stroke="#6B7280" stroke-width="2" fill="none"/>
-                </svg>
-                <input id="search" type="search" placeholder="Search products..." aria-label="Search products" />
-            </div>
+    <div class="actions">
+      <button class="icon-btn" id="openCartBtn" aria-label="Open cart">Cart <span id="cartCountInline" style="margin-left:8px;color:var(--accent);font-weight:700">0</span></button>
+      <button class="icon-btn" id="themeToggle" title="Toggle theme">❤</button>
+    </div>
+  </div>
 
-            <button class="cart" id="cartButton" aria-label="Open cart">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M3 3h2l.4 2M7 13h10l3-8H6.4" stroke="#0f172a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="10" cy="19" r="1" fill="#0f172a"></circle>
-                    <circle cx="18" cy="19" r="1" fill="#0f172a"></circle>
-                </svg>
-                <span class="count" id="cartCount" aria-hidden="true">0</span>
-            </button>
+  <!-- pages container -->
+  <main style="flex:1">
+    <!-- HOME -->
+    <section id="page-home" class="page" data-route="home">
+      <div class="hero">
+        <div class="hero-card">
+          <h1>Temsa7 — modern hoodies & tees crafted for statement looks</h1>
+          <p>Limited drops · Sustainable fabrics · Premium fit. Customize your own 3D hoodie or shop curated prints.</p>
+          <div style="display:flex;gap:12px;margin-top:18px">
+            <a href="#shop" class="cta">Shop Now</a>
+            <a href="#custom" class="btn ghost">Design Your Hoodie</a>
+          </div>
+          <div style="margin-top:18px;color:var(--muted);font-size:13px">Free shipping over $100 · 30-day returns</div>
         </div>
-    </header>
 
-    <main>
-        <section class="hero">
-            <div class="panel" aria-labelledby="hero-title">
-                <h1 id="hero-title">Discover what's new — seasonal picks for you</h1>
-                <p>Curated selection of trending items. Fast shipping, easy returns, and friendly support.</p>
-                <div style="display:flex;gap:12px;align-items:center">
-                    <a href="#" class="cta">Shop Featured</a>
-                    <a href="#" style="color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:10px">See all</a>
-                </div>
-                <div style="margin-top:16px;color:var(--muted);font-size:13px">
-                    Free shipping over $75 · 30-day returns
-                </div>
+        <aside class="promo">
+          <div style="font-weight:800">New Drop · Temsa7 Black Series</div>
+          <div style="color:var(--muted)">Bold, minimal, unforgettable.</div>
+          <div style="display:flex;gap:10px;margin-top:8px">
+            <button class="btn" onclick="location.hash='#shop'">Browse Drop</button>
+            <button class="btn ghost" onclick="location.hash='#custom'">Customize</button>
+          </div>
+        </aside>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <h2 style="margin:0">Featured Prints</h2>
+            <div style="color:var(--muted);font-size:13px">Shop printed hoodies & tees</div>
+          </div>
+
+          <div style="color:var(--muted);font-size:13px">Sort:
+            <select id="sortSelect" style="margin-left:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:8px;color:inherit">
+              <option value="popular">Popular</option>
+              <option value="new">Newest</option>
+              <option value="low">Price: Low to High</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="products" id="productGrid">
+          <!-- placeholder products - replace images & prices later -->
+          <article class="card" data-id="p1" data-name="Temsa7 Black Logo Hoodie" data-price="69">
+            <div class="product-media"><img src="https://images.unsplash.com/photo-1520975913050-eced6cfb5d05?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=3f84b9f3b6b2d8b3ae6f3f9f9d4f5c8e" alt=""></div>
+            <div>
+              <div style="font-weight:700">Temsa7 Black Logo Hoodie</div>
+              <div class="tags">Organic cotton · Unisex</div>
             </div>
-
-            <aside class="promo" aria-label="Promotions">
-                <div class="tile">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 12h18" stroke="#059e9d" stroke-width="2" stroke-linecap="round"/></svg>
-                    <div>
-                        <div style="font-weight:700">Limited Offer</div>
-                        <div style="font-size:13px;color:var(--muted)">10% off first order — use WELCOME</div>
-                    </div>
-                </div>
-
-                <div class="tile">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18" stroke="#059e9d" stroke-width="2" stroke-linecap="round"/></svg>
-                    <div>
-                        <div style="font-weight:700">Sustainable Brands</div>
-                        <div style="font-size:13px;color:var(--muted)">Carefully selected eco-friendly items</div>
-                    </div>
-                </div>
-
-                <div class="tile">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 8h18M8 21V8" stroke="#059e9d" stroke-width="2" stroke-linecap="round"/></svg>
-                    <div>
-                        <div style="font-weight:700">Fast Delivery</div>
-                        <div style="font-size:13px;color:var(--muted)">Same-day dispatch on many items</div>
-                    </div>
-                </div>
-            </aside>
-        </section>
-
-        <section>
-            <div class="section-head">
-                <div>
-                    <h2 style="margin:0">Featured Products</h2>
-                    <div style="color:var(--muted);font-size:13px">Handpicked items you'll love</div>
-                </div>
-                <div style="color:var(--muted);font-size:13px">Sort: <select id="sort" style="margin-left:8px"><option>Popular</option><option>Newest</option><option>Price: Low to High</option></select></div>
+            <div class="meta">
+              <div class="price">$69</div>
+              <div class="controls">
+                <button class="btn add-shop">Add</button>
+                <button class="btn ghost view-btn">View</button>
+              </div>
             </div>
+          </article>
 
-            <div class="products" id="productGrid" aria-live="polite">
-                <article class="card" data-id="1" data-name="Everyday Backpack" data-price="79">
-                    <div class="img" aria-hidden="true">Backpack</div>
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <div>
-                            <div style="font-weight:700">Everyday Backpack</div>
-                            <div class="tags">Waterproof · Unisex</div>
-                        </div>
-                        <div class="price">$79</div>
-                    </div>
-                    <div style="display:flex;gap:8px">
-                        <button class="add">Add to cart</button>
-                        <button class="secondary" type="button">View</button>
-                    </div>
-                </article>
-
-                <article class="card" data-id="2" data-name="Comfy Sneakers" data-price="99">
-                    <div class="img">Sneakers</div>
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <div>
-                            <div style="font-weight:700">Comfy Sneakers</div>
-                            <div class="tags">Breathable · Lightweight</div>
-                        </div>
-                        <div class="price">$99</div>
-                    </div>
-                    <div style="display:flex;gap:8px">
-                        <button class="add">Add to cart</button>
-                        <button class="secondary" type="button">View</button>
-                    </div>
-                </article>
-
-                <article class="card" data-id="3" data-name="Classic Watch" data-price="149">
-                    <div class="img">Watch</div>
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <div>
-                            <div style="font-weight:700">Classic Watch</div>
-                            <div class="tags">Stainless steel</div>
-                        </div>
-                        <div class="price">$149</div>
-                    </div>
-                    <div style="display:flex;gap:8px">
-                        <button class="add">Add to cart</button>
-                        <button class="secondary" type="button">View</button>
-                    </div>
-                </article>
-
-                <article class="card" data-id="4" data-name="Wireless Earbuds" data-price="59">
-                    <div class="img">Earbuds</div>
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <div>
-                            <div style="font-weight:700">Wireless Earbuds</div>
-                            <div class="tags">Noise-cancelling</div>
-                        </div>
-                        <div class="price">$59</div>
-                    </div>
-                    <div style="display:flex;gap:8px">
-                        <button class="add">Add to cart</button>
-                        <button class="secondary" type="button">View</button>
-                    </div>
-                </article>
-
-                <article class="card" data-id="5" data-name="Cozy Hoodie" data-price="49">
-                    <div class="img">Hoodie</div>
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <div>
-                            <div style="font-weight:700">Cozy Hoodie</div>
-                            <div class="tags">Organic cotton</div>
-                        </div>
-                        <div class="price">$49</div>
-                    </div>
-                    <div style="display:flex;gap:8px">
-                        <button class="add">Add to cart</button>
-                        <button class="secondary" type="button">View</button>
-                    </div>
-                </article>
-
-                <article class="card" data-id="6" data-name="Insulated Bottle" data-price="25">
-                    <div class="img">Bottle</div>
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <div>
-                            <div style="font-weight:700">Insulated Bottle</div>
-                            <div class="tags">Keeps drinks cold/hot</div>
-                        </div>
-                        <div class="price">$25</div>
-                    </div>
-                    <div style="display:flex;gap:8px">
-                        <button class="add">Add to cart</button>
-                        <button class="secondary" type="button">View</button>
-                    </div>
-                </article>
+          <article class="card" data-id="p2" data-name="Temsa7 Minimal Tee" data-price="29">
+            <div class="product-media"><img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=5b2dca9b21c6f6d6c2b9b6ae7b1c2f5a" alt=""></div>
+            <div>
+              <div style="font-weight:700">Temsa7 Minimal Tee</div>
+              <div class="tags">Lightweight · Breathable</div>
             </div>
-        </section>
-
-        <footer>
-            <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap">
-                <div>
-                    <div style="font-weight:700">Acme Shop</div>
-                    <div style="color:var(--muted);margin-top:6px">123 Market Street · Anytown · USA</div>
-                    <div style="color:var(--muted);margin-top:6px">support@acmeshop.example</div>
-                </div>
-
-                <div>
-                    <div style="font-weight:700">Newsletter</div>
-                    <div style="margin-top:6px;color:var(--muted);font-size:13px">Get updates about new products and offers.</div>
-                    <div style="display:flex;gap:8px;margin-top:8px">
-                        <input id="email" placeholder="Email address" style="padding:8px 10px;border-radius:8px;border:1px solid #e6eef0" />
-                        <button id="subscribe" style="padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:600">Subscribe</button>
-                    </div>
-                </div>
-
-                <div style="min-width:160px">
-                    <div style="font-weight:700">Help</div>
-                    <div style="margin-top:6px;color:var(--muted)"><a href="#" style="text-decoration:none;color:inherit">Shipping</a></div>
-                    <div style="margin-top:6px;color:var(--muted)"><a href="#" style="text-decoration:none;color:inherit">Returns</a></div>
-                    <div style="margin-top:6px;color:var(--muted)"><a href="#" style="text-decoration:none;color:inherit">FAQ</a></div>
-                </div>
+            <div class="meta">
+              <div class="price">$29</div>
+              <div class="controls">
+                <button class="btn add-shop">Add</button>
+                <button class="btn ghost view-btn">View</button>
+              </div>
             </div>
+          </article>
 
-            <div style="margin-top:18px;color:var(--muted);font-size:13px">© <span id="year"></span> Acme Shop. All rights reserved.</div>
-        </footer>
-    </main>
+          <article class="card" data-id="p3" data-name="Temsa7 Olive Hoodie" data-price="75">
+            <div class="product-media"><img src="https://images.unsplash.com/photo-1521334884684-d80222895322?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=7e9527db4b8c2a1e0f3b5c6d9b8f3e6d" alt=""></div>
+            <div>
+              <div style="font-weight:700">Temsa7 Olive Hoodie</div>
+              <div class="tags">Slightly oversized</div>
+            </div>
+            <div class="meta">
+              <div class="price">$75</div>
+              <div class="controls">
+                <button class="btn add-shop">Add</button>
+                <button class="btn ghost view-btn">View</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
 
-    <script>
-        // Simple cart behavior: increment count, store in localStorage
-        (function(){
-            const cartCountEl = document.getElementById('cartCount');
-            const addButtons = document.querySelectorAll('.add');
-            const yearEl = document.getElementById('year');
-            yearEl.textContent = new Date().getFullYear();
+    <!-- SHOP (separate page) -->
+    <section id="page-shop" class="page" data-route="shop" style="display:none">
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <h2 style="margin:0">Shop — Printed Collections</h2>
+            <div style="color:var(--muted);font-size:13px">Ready-made drops you can buy now</div>
+          </div>
+          <div><button class="btn ghost" onclick="location.hash='#custom'">Design a Custom Hoodie</button></div>
+        </div>
 
-            function getCount(){ return Number(localStorage.getItem('acme_cart_count') || 0); }
-            function setCount(n){ localStorage.setItem('acme_cart_count', String(n)); cartCountEl.textContent = n; }
+        <div class="products" id="shopGrid">
+          <!-- duplicate of products (for clarity) -->
+        </div>
+      </div>
+    </section>
 
-            setCount(getCount());
+    <!-- CUSTOMIZER -->
+    <section id="page-custom" class="page" data-route="custom" style="display:none">
+      <div class="section custom-page">
+        <div class="panel">
+          <h3 style="margin:0 0 8px">Customizer — 3D Hoodie Maker</h3>
+          <div style="color:var(--muted);font-size:13px;margin-bottom:12px">Choose color, size, upload art or add text. The 3D preview updates live.</div>
 
-            addButtons.forEach(btn=>{
-                btn.addEventListener('click', (e)=>{
-                    const card = e.currentTarget.closest('.card');
-                    const name = card.dataset.name;
-                    const price = card.dataset.price;
-                    const id = card.dataset.id;
-                    // increment
-                    const newCount = getCount() + 1;
-                    setCount(newCount);
-                    // brief visual feedback
-                    btn.textContent = 'Added';
-                    btn.disabled = true;
-                    setTimeout(()=>{ btn.textContent = 'Add to cart'; btn.disabled = false; }, 900);
-                    // Log to console (placeholder for analytics / cart storage)
-                    console.info('Added to cart:', { id, name, price });
-                });
-            });
+          <div class="control"><div class="label">Product</div>
+            <select id="productSelect" class="select">
+              <option value="hoodie">Hoodie (pullover)</option>
+              <option value="zip">Hoodie (zip)</option>
+              <option value="tee">T-Shirt</option>
+            </select>
+          </div>
 
-            // basic search filter
-            const search = document.getElementById('search');
-            search.addEventListener('input', ()=>{
-                const q = search.value.trim().toLowerCase();
-                document.querySelectorAll('.card').forEach(card=>{
-                    const name = card.dataset.name.toLowerCase();
-                    const tags = (card.querySelector('.tags')?.textContent || '').toLowerCase();
-                    if (!q || name.includes(q) || tags.includes(q)) card.style.display = '';
-                    else card.style.display = 'none';
-                });
-            });
+          <div class="control"><div class="label">Color</div>
+            <div class="pills" id="colorPills">
+              <!-- preset colors -->
+            </div>
+          </div>
 
-            // subscribe button (UI only)
-            document.getElementById('subscribe').addEventListener('click', ()=>{
-                const email = document.getElementById('email').value.trim();
-                if (!email) { alert('Please type your email'); return; }
-                alert('Thanks — you are subscribed: ' + email);
-                document.getElementById('email').value = '';
-            });
-        })();
-    </script>
+          <div class="control"><div class="label">Size</div>
+            <select id="sizeSelect" class="select">
+              <option>S</option><option>M</option><option>L</option><option>XL</option>
+            </select>
+          </div>
+
+          <div class="control"><div class="label">Add Art</div>
+            <input type="file" id="designFile" accept="image/*" />
+          </div>
+
+          <div class="control"><div class="label">Add Text</div>
+            <input id="customText" placeholder="Text on chest (optional)" style="padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit" />
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:10px;">
+            <button class="btn" id="addCustomToCart">Add Custom to Cart</button>
+            <button class="btn ghost" id="downloadPreview">Download Preview</button>
+          </div>
+
+          <div style="margin-top:16px;color:var(--muted);font-size:13px">
+            Tip: Upload PNGs with transparent background for the cleanest prints.
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="viewer" id="viewer">
+            <!-- three.js canvas will be injected here -->
+            <div class="hint">Drag to rotate • Scroll to zoom</div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+            <div class="small">Preview</div>
+            <div style="flex:1;height:1px;background:rgba(255,255,255,0.03)"></div>
+            <div class="small">Lighting & material are simulated — final print may vary.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="page-about" class="page" data-route="about" style="display:none">
+      <div class="section">
+        <div class="hero-card" style="padding:24px">
+          <h2>About Temsa7</h2>
+          <p style="color:var(--muted)">Temsa7 is a small label focused on premium materials, honest pricing, and thoughtful design. We make limited drops and offer a simple 3D customizer so you can see your design before ordering.</p>
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <button class="btn">See Manufacturing</button>
+            <button class="btn ghost">Sustainability</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="page-contact" class="page" data-route="contact" style="display:none">
+      <div class="section">
+        <div class="panel">
+          <h3>Contact</h3>
+          <p style="color:var(--muted)">Questions? Collab? Email us at <strong>hello@temsa7.example</strong></p>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <input id="messageName" placeholder="Name" style="padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit" />
+            <input id="messageEmail" placeholder="Email" style="padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit" />
+          </div>
+          <textarea id="messageBody" placeholder="Message" style="width:100%;min-height:120px;margin-top:8px;padding:12px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit"></textarea>
+          <div style="margin-top:8px"><button class="btn" id="sendMessage">Send</button></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- cart drawer -->
+  <aside class="cart-drawer" id="cartDrawer" aria-hidden="true">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-weight:800">Your Cart</div>
+      <div class="small" id="cartTotalLabel">$0.00</div>
+    </div>
+    <div id="cartItems" style="display:flex;flex-direction:column;gap:10px;max-height:320px;overflow:auto;padding-top:6px"></div>
+    <div style="display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:8px">
+      <button class="btn" id="checkoutBtn">Checkout</button>
+      <button class="btn ghost" id="clearCart">Clear</button>
+    </div>
+  </aside>
+
+  <footer>
+    <div>
+      <div style="font-weight:800">Temsa7</div>
+      <div style="color:var(--muted);margin-top:6px">Premium streetwear · Limited runs</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="color:var(--muted);font-size:13px">© <span id="year"></span> Temsa7. All rights reserved.</div>
+    </div>
+  </footer>
+
+<script>
+/* -------------------------
+   Basic app / routing / UI
+   ------------------------- */
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const pages = Array.from(document.querySelectorAll('.page'));
+const navLinks = document.querySelectorAll('.nav-link');
+function showRoute(route){
+  pages.forEach(p => p.style.display = p.dataset.route === route ? '' : 'none');
+  navLinks.forEach(a => a.classList.toggle('active', a.dataset.route === route));
+}
+function currentRoute(){
+  const h = location.hash.replace('#','') || 'home';
+  return h.split('?')[0];
+}
+window.addEventListener('hashchange', ()=> showRoute(currentRoute()));
+showRoute(currentRoute());
+
+/* quick clone products into shop grid */
+const productGrid = document.getElementById('productGrid');
+const shopGrid = document.getElementById('shopGrid');
+shopGrid.innerHTML = productGrid.innerHTML;
+
+/* add to cart (for shop products) */
+function getCart(){ return JSON.parse(localStorage.getItem('temsa7_cart')||'[]') }
+function saveCart(c){ localStorage.setItem('temsa7_cart', JSON.stringify(c)); updateCartUI(); }
+function cartCount(){ return getCart().reduce((s,i)=>s+i.qty,0) }
+function updateCartUI(){
+  const items = getCart();
+  document.getElementById('cartCountInline').textContent = items.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('cartTotalLabel').textContent = '$' + items.reduce((s,i)=>s+i.qty*i.price,0).toFixed(2);
+  const container = document.getElementById('cartItems');
+  container.innerHTML = '';
+  if(items.length===0){ container.innerHTML = '<div style="color:var(--muted)">Cart is empty</div>'; return; }
+  items.forEach((it, idx) => {
+    const el = document.createElement('div'); el.className='cart-item';
+    el.innerHTML = \`
+      <div class="cart-thumb"><img src="\${it.thumb||''}" style="width:100%;height:100%;object-fit:cover" alt=""></div>
+      <div style="flex:1">
+        <div style="font-weight:700">\${it.name}</div>
+        <div class="small">\${it.variant||''} • \${it.size||''}</div>
+        <div class="small" style="margin-top:6px">Qty: <input type="number" value="\${it.qty}" min="1" style="width:60px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit"></div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-weight:800;color:var(--accent)">$ \${(it.price*it.qty).toFixed(2)}</div>
+        <button data-idx="\${idx}" class="btn ghost remove-item" style="margin-top:8px">Remove</button>
+      </div>
+    \`;
+    container.appendChild(el);
+    el.querySelector('input').addEventListener('change', (e)=>{
+      const v = Math.max(1,Number(e.target.value||1));
+      const c = getCart();
+      c[idx].qty = v; saveCart(c);
+    });
+    el.querySelector('.remove-item').addEventListener('click', ()=>{
+      const c = getCart(); c.splice(idx,1); saveCart(c);
+    });
+  });
+}
+
+/* shop add buttons */
+document.querySelectorAll('.add-shop').forEach(btn=>{
+  btn.addEventListener('click', (e)=>{
+    const card = e.currentTarget.closest('.card');
+    const item = {
+      id: card.dataset.id,
+      name: card.dataset.name,
+      price: Number(card.dataset.price),
+      qty: 1,
+      thumb: card.querySelector('img')?.src || '',
+      variant: 'Printed'
+    };
+    const c = getCart(); c.push(item); saveCart(c);
+    // feedback
+    btn.textContent='Added'; btn.disabled=true;
+    setTimeout(()=>{ btn.textContent='Add'; btn.disabled=false; },900);
+  });
+});
+
+/* cart drawer toggle */
+const cartDrawer = document.getElementById('cartDrawer');
+document.getElementById('openCartBtn').addEventListener('click', ()=>{
+  cartDrawer.classList.toggle('show');
+});
+document.getElementById('clearCart').addEventListener('click', ()=>{ localStorage.removeItem('temsa7_cart'); updateCartUI(); });
+
+document.getElementById('checkoutBtn').addEventListener('click', ()=>{
+  alert('Checkout stub — connect payment gateway later. Order saved locally.');
+  // In production, send getCart() to backend / payments.
+});
+
+/* init cart UI on load */
+updateCartUI();
+
+/* view buttons (quick view) */
+document.querySelectorAll('.view-btn').forEach(btn=>{
+  btn.addEventListener('click', (e)=>{
+    const card = e.currentTarget.closest('.card');
+    alert(card.dataset.name + '\\n\\nThis is a quick view placeholder. Replace with modal and full product page later.');
+  });
+});
+
+/* send message (contact) */
+document.getElementById('sendMessage').addEventListener('click', ()=>{
+  const name = document.getElementById('messageName').value.trim();
+  const email = document.getElementById('messageEmail').value.trim();
+  const body = document.getElementById('messageBody').value.trim();
+  if(!name||!email||!body){ alert('Please fill name, email and message.'); return; }
+  alert('Message sent (UI-only). We will integrate back-end messaging later.');
+  document.getElementById('messageName').value='';document.getElementById('messageEmail').value='';document.getElementById('messageBody').value='';
+});
+
+/* theme toggle (simple) */
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', ()=>{ document.body.classList.toggle('light'); });
+
+/* simple sort (client-side) */
+document.getElementById('sortSelect').addEventListener('change', (e)=>{
+  // placeholder: no real sorting for now
+  alert('Sort changed to ' + e.target.value + '. Replace with server-side or client sort later.');
+});
+
+/* -------------------------
+   Customizer: 3D viewer (Three.js)
+   - Simple rounded-box "hoodie" with canvas texture
+   - Upload image maps onto chest area (texture)
+   ------------------------- */
+
+const viewerEl = document.getElementById('viewer');
+let renderer, scene, camera, controls, hoodieMesh;
+let currentColor = '#0b0b0b';
+let uploadedImage = null;
+let customText = '';
+
+function init3D(){
+  // renderer
+  renderer = new THREE.WebGLRenderer({antialias:true,alpha:true});
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(viewerEl.clientWidth, viewerEl.clientHeight);
+  renderer.domElement.style.width='100%';
+  renderer.domElement.style.height='100%';
+  viewerEl.appendChild(renderer.domElement);
+
+  // scene
+  scene = new THREE.Scene();
+  scene.background = null;
+
+  // camera
+  camera = new THREE.PerspectiveCamera(35, viewerEl.clientWidth/viewerEl.clientHeight, 0.1, 100);
+  camera.position.set(0, 1.6, 3.5);
+
+  // lights
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x080820, 0.8);
+  scene.add(hemi);
+  const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+  dir.position.set(5,10,7);
+  scene.add(dir);
+
+  // ground (soft)
+  const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(20,20),
+    new THREE.MeshStandardMaterial({color:0x030406,opacity:0.0,transparent:true})
+  );
+  ground.rotation.x = -Math.PI/2;
+  ground.position.y = -1.2;
+  scene.add(ground);
+
+  // hoodie mesh: a rounded capsule-like box (approximate)
+  const geo = new THREE.CapsuleGeometry(0.9, 1.1, 10, 24); // body shape
+  const mat = new THREE.MeshStandardMaterial({ color: currentColor, roughness:0.6, metalness:0.05 });
+  hoodieMesh = new THREE.Mesh(geo, mat);
+  hoodieMesh.position.y = 0.4;
+  hoodieMesh.scale.set(1,1.05,1);
+  scene.add(hoodieMesh);
+
+  // small hood as separate geometry (sphere cut)
+  const hoodGeo = new THREE.SphereGeometry(0.78, 24, 16, 0, Math.PI*2, 0, Math.PI/1.5);
+  const hoodMat = new THREE.MeshStandardMaterial({color:currentColor, roughness:0.65});
+  const hood = new THREE.Mesh(hoodGeo, hoodMat);
+  hood.position.set(0,1.05,0.03);
+  hood.scale.set(1,0.7,1.02);
+  scene.add(hood);
+
+  // group for garment so we can apply texture / capture screenshot
+  hoodieMesh.userData.isHoodie = true;
+
+  // controls
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enablePan = false;
+  controls.minDistance = 1.6;
+  controls.maxDistance = 6;
+  controls.target.set(0,0.6,0);
+  controls.update();
+
+  // handle resize
+  window.addEventListener('resize', onResize);
+  animate();
+}
+
+function onResize(){
+  if(!renderer) return;
+  const w = viewerEl.clientWidth, h = viewerEl.clientHeight;
+  renderer.setSize(w,h);
+  camera.aspect = w/h;
+  camera.updateProjectionMatrix();
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+  if(hoodieMesh && hoodieMesh.material && hoodieMesh.material.map){
+    hoodieMesh.material.map.needsUpdate = true;
+  }
+  renderer.render(scene, camera);
+}
+
+/* color palette */
+const colors = ['#041014','#0b0b0b','#ffffff','#e6e6e6','#28302e','#2b3b57','#6b3a2b','#6c5d3b','#9ccaa7','#bdb6ff'];
+const colorPills = document.getElementById('colorPills');
+colors.forEach(c=>{
+  const s = document.createElement('div'); s.className='color-swatch'; s.style.background = c;
+  s.title = c; s.dataset.color = c;
+  s.addEventListener('click', ()=>{ setColor(c); document.querySelectorAll('.color-swatch').forEach(x=>x.classList.remove('active')); s.classList.add('active'); });
+  colorPills.appendChild(s);
+});
+// set first active
+document.querySelectorAll('.color-swatch')[0].classList.add('active');
+
+function setColor(hex){
+  currentColor = hex;
+  if(hoodieMesh){
+    hoodieMesh.material.color.set(hex);
+    // hood also
+    scene.children.forEach(c=>{
+      if(c.isMesh && c!==hoodieMesh) c.material.color?.set(hex);
+    });
+  }
+}
+
+/* handle upload file -> image used as a chest decal */
+document.getElementById('designFile').addEventListener('change', (e)=>{
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = function(ev){
+    const img = new Image();
+    img.onload = function(){
+      uploadedImage = img;
+      updateTexture();
+    }
+    img.src = ev.target.result;
+  }
+  r.readAsDataURL(f);
+});
+
+/* handle text input (simple rendering into canvas) */
+document.getElementById('customText').addEventListener('input', (e)=>{
+  customText = e.target.value;
+  updateTexture();
+});
+
+/* draw combined texture onto canvas and apply to hoodie material */
+function updateTexture(){
+  // canvas size - use power of two for textures
+  const W = 1024, H = 1024;
+  const canvas = document.createElement('canvas'); canvas.width=W; canvas.height=H;
+  const ctx = canvas.getContext('2d');
+
+  // fill base color
+  ctx.fillStyle = hexToRGBA(currentColor);
+  ctx.fillRect(0,0,W,H);
+
+  // optionally put uploaded image centered on chest area (we'll place around center-top)
+  if(uploadedImage){
+    // compute scale
+    const maxW = W * 0.6;
+    const scale = Math.min(maxW / uploadedImage.width, (W*0.35) / uploadedImage.height, 1);
+    const w = uploadedImage.width * scale;
+    const h = uploadedImage.height * scale;
+    const x = (W - w)/2;
+    const y = H*0.32 - h/2;
+    ctx.drawImage(uploadedImage, x, y, w, h);
+  }
+
+  // add text if provided
+  if(customText && customText.trim()){
+    ctx.font = '60px "Inter", sans-serif';
+    ctx.textAlign='center';
+    ctx.fillStyle = 'rgba(0,0,0,0.85)';
+    ctx.fillText(customText, W/2, H*0.7);
+  }
+
+  // create three.js texture
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.flipY = false;
+  tex.encoding = THREE.sRGBEncoding;
+
+  // apply to hoodie material as an overlay map (using multiply-ish approach)
+  const base = new THREE.TextureLoader().load(null); // dummy
+  hoodieMesh.material.map = tex;
+  hoodieMesh.material.needsUpdate = true;
+
+  // also apply to hood
+  scene.children.forEach(c=>{
+    if(c.isMesh && c!==hoodieMesh) c.material.map = tex;
+  });
+}
+
+/* helper to convert hex to rgba string (light alpha) */
+function hexToRGBA(hex){
+  // remove #
+  hex = hex.replace('#','');
+  if(hex.length===3) hex = hex.split('').map(x=>x+x).join('');
+  const r = parseInt(hex.substring(0,2),16);
+  const g = parseInt(hex.substring(2,4),16);
+  const b = parseInt(hex.substring(4,6),16);
+  return 'rgb('+r+','+g+','+b+')';
+}
+
+/* capture renderer as thumbnail dataURL */
+function captureThumbnail(){
+  // render once at higher res
+  const prevSize = renderer.getSize(new THREE.Vector2());
+  const prevRatio = renderer.getPixelRatio();
+  const w = 800, h = 800;
+  renderer.setPixelRatio(1);
+  renderer.setSize(w,h);
+  renderer.render(scene, camera);
+  const data = renderer.domElement.toDataURL('image/png');
+  // restore
+  renderer.setSize(prevSize.x, prevSize.y);
+  renderer.setPixelRatio(prevRatio);
+  return data;
+}
+
+/* add custom to cart */
+document.getElementById('addCustomToCart').addEventListener('click', ()=>{
+  const product = document.getElementById('productSelect').value;
+  const size = document.getElementById('sizeSelect').value;
+  const price = product === 'tee' ? 29 : (product === 'zip' ? 89 : 79); // sample pricing
+  const name = 'Custom ' + (product === 'tee' ? 'T-Shirt' : product === 'zip' ? 'Zip Hoodie' : 'Pullover Hoodie');
+  // capture thumbnail
+  const thumb = captureThumbnail();
+  const item = {
+    id: 'custom_' + Date.now(),
+    name,
+    price,
+    qty:1,
+    thumb,
+    variant: 'Custom',
+    color: currentColor,
+    size,
+    meta: { text: customText }
+  };
+  const c = getCart(); c.push(item); saveCart(c);
+  alert('Custom item added to cart.');
+});
+
+/* download preview */
+document.getElementById('downloadPreview').addEventListener('click', ()=>{
+  const data = captureThumbnail();
+  const a = document.createElement('a'); a.href = data; a.download = 'temsa7-preview.png'; a.click();
+});
+
+/* init everything */
+init3D();
+updateTexture(); // initial texture
+
+/* ensure viewer resizes with container changes (for mobile) */
+new ResizeObserver(onResize).observe(viewerEl);
+
+/* small utility: debounce user resize */
+function debounce(fn,ms=80){let t;return (...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}}
+
+/* finally, show product grid items in shop page */
+document.getElementById('page-shop').querySelector('#shopGrid').innerHTML = document.getElementById('productGrid').innerHTML;
+
+/* expose a place to tweak materials later (you'll tell me how you want prints mapped) */
+window.temsa7 = { setColor, updateTexture, captureThumbnail, getCart };
+
+/* done */
+</script>
 </body>
-</html></div></article></div></svg></button></svg></div>
+</html>
